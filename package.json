@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "pythy-pythy",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Trial electron app",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -14,9 +14,12 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
+  "author": "S Baker",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^13.1.7"
+  },
+  "dependencies": {
+    "python-shell": "^3.0.0"
   }
 }
