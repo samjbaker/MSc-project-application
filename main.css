@@ -2,3 +2,17 @@
     margin: auto;
     width: 50%;
   }
+
+.image-cnt {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+}
+
+.btn-cnt {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+}

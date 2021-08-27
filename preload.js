@@ -11,13 +11,13 @@ contextBridge.exposeInMainWorld(
   "api", {
       send: (channel, data) => {
           // whitelist channels
-          let validChannels = ["toMain", "chooseFile"];
+          let validChannels = ["toMain", "chooseFile", "getImage"];
           if (validChannels.includes(channel)) {
               ipcRenderer.send(channel, data);
           }
       },
       receive: (channel, func) => {
-          let validChannels = ["fromMain", "chosenFile"];
+          let validChannels = ["fromMain", "chosenFile", "invalidFile", "returnImage"];
           if (validChannels.includes(channel)) {
               // Deliberately strip event as it includes `sender` 
               ipcRenderer.on(channel, (event, ...args) => func(...args));

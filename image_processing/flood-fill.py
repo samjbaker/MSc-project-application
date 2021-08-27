@@ -13,7 +13,7 @@ def open_file(path_to_file):
     im = cv2.imread(os.path.join(__location__, path_to_file))
     return im
 
-
+"""
 def write_file(path_to_file, image):
     # ensuring that the cwd is correct
     __location__ = os.path.realpath(
@@ -23,17 +23,19 @@ def write_file(path_to_file, image):
     path_to_write = os.path.join(__location__, path_to_file)
     cv2.imwrite(path_to_write, image)
     return path_to_write
-
+"""
 
 def flood_fill(x, y):
     return x*100, y*100
 
 
 def main():
-    x = int(sys.argv[1])
-    y = int(sys.argv[2])
+    x = int(float(sys.argv[1]))
+    y = int(float(sys.argv[2]))
+    temp_dir = sys.argv[3]
+    path_to_write = os.path.join(temp_dir, "temp.jpg")
 
-    image = open_file(os.path.join("temp_images", "temp.jpg"))
+    image = open_file(path_to_write)
     seed_point = [x, y]
     #seed_point = (290, 290)  # Coordinates
     #new_val = (255, 255, 255)  # Assign new value
@@ -48,7 +50,9 @@ def main():
     cv2.floodFill(img_copy, img_mask, seed_point, new_val, lower_diff, up_diff,
                      flags=4 | (255 << 8) | cv2.FLOODFILL_FIXED_RANGE)  # Mode 4 connectivity + 255 white + area calculation
 
-    print(write_file(os.path.join("temp_images","temp.jpg"), img_copy))
+    #print(write_file(os.path.join(temp_dir,"temp.jpg"), img_copy))
+    cv2.imwrite(path_to_write, img_copy)
+    print(path_to_write)
     sys.stdout.flush()
 
 

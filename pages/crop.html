@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Electron Test</title>
+    <link rel="stylesheet" href="../bootstrap.min.css">
+    <link rel="stylesheet" href="../main.css">
+    <link rel="stylesheet" href="../jcrop.css">
+  </head>
+  <body>
+    <h1>Let's get ready to render!!! :)</h1>
+    <div id="text-container" class="txt-cnt">
+        Does the image need to be cropped to remove unnecessary external details?
+    </div>
+    <div id="image-container" class="image-cnt">
+        <!--/var/folders/hj/kk6hnms5017cn_p94jlryx000000gn/T/temp.jpg-->
+    </div>
+    <div id="btn-container" class="btn-cnt">
+      <button id="yes-crop" class="btn btn-primary">Yes</button>
+      <a href=""><button id="no-crop" class="btn btn-warning">No</button></a>
+    </div>
+
+
+    <!-- You can also require other files to run in this process -->
+    <!-- <script src="../renderer.js"></script> -->
+    <script src="./jcrop.js"></script>
+    <script src="./crop.js"></script>
+  </body>
+</html>
