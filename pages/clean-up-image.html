@@ -4,28 +4,26 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Electron Test</title>
+    <title>Floorplan Visualizer</title>
     <link rel="stylesheet" href="../bootstrap.min.css">
     <link rel="stylesheet" href="../main.css">
     <link rel="stylesheet" href="../jcrop.css">
   </head>
   <body>
-    <h1>Let's get ready to render!!! :)</h1>
+    <h1>Floorplan Visualizer</h1>
     <div id="text-container" class="txt-cnt">
-        Does the image need to be cropped to remove unnecessary external details?
+        Have any areas been selected as walls incorrectly? Click on the image to toggle between the original and the highlighted walls.
     </div>
     <div id="image-container" class="image-cnt">
       
     </div>
     <div id="btn-container" class="btn-cnt">
-      <button id="yes-crop" class="btn btn-success">Yes</button>
-      <a href="perspective.html"><button id="no-crop" class="btn btn-danger">No</button></a>
+      <button id="clean-yes" class="btn btn-success">Yes</button>
+      <a href="detect-doors.html"><button id="clean-no" class="btn btn-danger">No</button></a>
     </div>
 
-
     <!-- You can also require other files to run in this process -->
-    <!-- <script src="../renderer.js"></script> -->
     <script src="./jcrop.js"></script>
-    <script src="./crop.js"></script>
+    <script src="./clean-up-image.js"></script>
   </body>
 </html>

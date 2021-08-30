@@ -53,23 +53,6 @@ function createContinueButton() {
     button.type = "button";
     button.value = "Continue";
     button.className = "btn btn-success";
-    /*
-    button.onclick = function cropSetUp() {
-        var btn_div = document.getElementById('btn-container');
-        btn_div.textContent = '';
-        txt_target = document.getElementById('text-container').textContent = 'Does the image need to be cropped to remove unnecessary external details?'
-        var yesButton = document.createElement("yes-btn");
-        var noButton = document.createElement("no-btn");
-        yesButton.type = "button";
-        yesButton.value = "Yes";
-        yesButton.className = "btn btn-success";
-        noButton.type = "button";
-        noButton.value = "No";
-        noButton.className = "btn btn-danger";
-        btn_div.appendChild(yesButton);
-        btn_div.appendChild(noButton);
-      }
-      */
     aTag.appendChild(button);
     btn_div.prepend(aTag);
   }
