@@ -58,6 +58,9 @@ app.whenReady().then(() => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
   //if (process.platform !== 'darwin') 
+  let tempFile = path.join(app.getPath('temp'),'temp_walls.jpg')
+  deleteFile(tempFile)
+  console.log("delteted!")
   app.quit()
 })
 
@@ -90,7 +93,7 @@ ipcMain.on("toMain", (event, args) => {
       if (err){
         throw err;
       };
-      //console.log("The message: "+ ret_val);
+      //console.log("Py message: "+ ret_val);
       //console.log('finished');
       // Send result back to renderer process
       mainWindow.webContents.send("fromMain", ret_val);
@@ -107,7 +110,6 @@ ipcMain.on("chooseFile", (event, arg) => {
     filters: [{ name: "Images", extensions: ["png","jpg","jpeg","gif","png"] }]
   });
   result.then(({canceled, filePaths, bookmarks}) => {
-    //Test cancelling
     if(!canceled){
       src_image = filePaths[0]
       //copyFile(src_image, dest_image)
@@ -138,7 +140,7 @@ ipcMain.on("getImage", (event, args) => {
     mainWindow.webContents.send("returnImage", origImage);
 });
 
-//Crops image to specified dimensions
+//Crops image to specified dimensions for crop.html
 ipcMain.on("cropImage", (event, args) => {
   origImage = path.join(app.getPath('temp'),'temp.jpg')
   croppedImage = path.join(app.getPath('temp'),'temp1.jpg')
@@ -290,12 +292,133 @@ ipcMain.on("detectDoors", (event, args) => {
   });
 });
 
-
 //sending image url to renderer
 ipcMain.on("getImageDoors", (event, args) => {
   let doorImage = path.join(app.getPath('temp'),'temp_doors.jpg')
   mainWindow.webContents.send("returnImageDoors", doorImage);
 });
+
+//Handles launching python files for fix-doors.html
+ipcMain.on("fillDoors", (event, args) => {
+  //console.log(`From renderer: `+ args[0] + " " + args[1])
+  x = args[0]
+  y = args[1]
+  temp_dir = path.join(app.getPath('temp'))
+  temp_file = path.join(app.getPath('temp'),'temp_doors.jpg')
+  back_up = path.join(app.getPath('temp'),'temp_undo.jpg')
+  temp_file2 = path.join(app.getPath('temp'),'temp_doors_bw.jpg')
+  back_up2 = path.join(app.getPath('temp'),'temp_undo2.jpg')
+  copyFile(temp_file, back_up)
+  copyFile(temp_file2, back_up2)
+
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [x, y, temp_dir]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','flood-fill_doors.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+    console.log("Fix message: "+ ret_val);
+    //console.log('finished');
+    // Send result back to renderer process
+    mainWindow.webContents.send("filledDoors", ret_val);
+  });
+});
+
+//Implementing undo function for fix-door.html
+ipcMain.on("undoDoor", (event, args) => {
+  let temp_file = path.join(app.getPath('temp'),'temp_doors.jpg')
+  let back_up = path.join(app.getPath('temp'),'temp_undo.jpg')
+  let temp_file2 = path.join(app.getPath('temp'),'temp_doors_bw.jpg')
+  let back_up2 = path.join(app.getPath('temp'),'temp_undo2.jpg')
+  copyFile(back_up, temp_file)
+  copyFile(back_up2, temp_file2)
+  mainWindow.webContents.send("undoneDoor", temp_file);
+});
+
+//Handles launching python script for generating model for generate-model.html
+ipcMain.on("makeModel", (event, args) => {
+  //console.log(`From renderer: `+ args[0] + " " + args[1])
+  temp_dir = path.join(app.getPath('temp'))
+  file_name_walls = "temp_walls.jpg"
+  file_name_doors = "temp_doors_bw.jpg"
+
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [temp_dir, file_name_walls, file_name_doors]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','model-generation.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+    console.log("Model msg: "+ ret_val);
+    console.log('finished');
+    // Send result back to renderer process
+    mainWindow.webContents.send("madeModel", ret_val);
+  });
+});
+
+//Sending Mesh path back to view-model.js
+ipcMain.on("getMesh", (event, args) => {
+  let meshPath = path.join(app.getPath('temp'),'temp_mesh.stl')
+  mainWindow.webContents.send("returnMesh", meshPath);
+});
+
+
+//Handles saving the final mesh to a destination of the user's choice
+ipcMain.on("saveFile", (event, arg) => {
+  let srcFile = path.join(app.getPath('temp'),"temp_mesh.stl")
+  const saveFile = dialog.showSaveDialog({
+    filters: [{ name: "Mesh", extensions: ["stl"] }],
+    message: "Choose where to save your model"
+  }).then(result => {
+    if(!result.cancelled){
+      console.log(result.filePath);
+      copyFile(srcFile, result.filePath)
+      mainWindow.webContents.send("savedFile", destPath)
+    }
+    else {
+      console.log(result.cancelled);
+    }
+  }).catch(err => {
+    console.log(err)
+  });
+});
+
+//Deletes temp files ready for flood-fill.js
+ipcMain.on("clearImage", (event, args) => {
+  let imgPath = path.join(app.getPath('temp'),'temp_walls.jpg')
+  deleteFile(imgPath)
+});
+
+/*
+=======================================================================
+========================= Helper Functions ============================
+=======================================================================
+*/
 
 //Deletes selected file
 function deleteFile(path_to_file){

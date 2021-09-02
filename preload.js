@@ -13,7 +13,8 @@ contextBridge.exposeInMainWorld(
           // whitelist channels
           let validChannels = ["toMain", "chooseFile", "getImage", 
           "cropImage", "detectWalls", "getImageWalls", "getImageWalls2",
-          "undoFill", "drawSquare", "detectDoors", "getImageDoors"];
+          "undoFill", "drawSquare", "detectDoors", "getImageDoors",
+          "fillDoors", "undoDoor", "makeModel", "getMesh", "saveFile", "clearImage"];
           if (validChannels.includes(channel)) {
               ipcRenderer.send(channel, data);
           }
@@ -23,7 +24,8 @@ contextBridge.exposeInMainWorld(
           ["fromMain", "chosenFile", "invalidFile", "returnImage", 
           "croppedImage", "detectedWalls", "returnImageWalls", 
           "returnImageWalls2", "undoneFill", "drawnSquare", "detectedDoors", 
-          "returnImageDoors"];
+          "returnImageDoors", "filledDoors", "undoneDoor", "madeModel", "returnMesh",
+          "savedFile"];
           if (validChannels.includes(channel)) {
               // Deliberately strip event as it includes `sender` 
               ipcRenderer.on(channel, (event, ...args) => func(...args));

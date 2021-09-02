@@ -1,3 +1,5 @@
+let origImage, doorImage
+
 window.onload = function() {
     window.api.send("getImageWalls");
 
@@ -9,6 +11,13 @@ window.onload = function() {
         img_div.appendChild(img);
         return;
     });
+
+    window.api.send("getImage");
+
+    window.api.receive("returnImage", (message) => {
+        origImage = message;
+        return;
+    });
 }
 
 document.getElementById('detect-doors').onclick = function detectDoors() {
@@ -17,6 +26,7 @@ document.getElementById('detect-doors').onclick = function detectDoors() {
     window.api.send("detectDoors");
     window.api.receive("detectedDoors", (message) => {
         console.log(message);
+        doorImage = message;
         updateImage(message, 'building-plan');
         //window.location.href = "perspective.html";
         createButtons();
@@ -57,11 +67,11 @@ function createButtons()
     img_div.onclick = function toggleImage()
     {
         var pic = document.getElementById('building-plan');
-        if (pic.src.substring(pic.src.length - 5) == "2.jpg"){
+        if (pic.src.substring(pic.src.length - 5) == "s.jpg"){
             pic.src = origImage;
         }
         else {
-            pic.src = wallImage2;
+            pic.src = doorImage;
         }
     }
 }

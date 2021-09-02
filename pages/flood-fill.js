@@ -1,4 +1,6 @@
 window.onload = function() {
+    window.api.send("clearImage");
+
     window.api.send("getImage");
 
     window.api.receive("returnImage", (message) => {

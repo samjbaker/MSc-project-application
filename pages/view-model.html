@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Floorplan Visualizer</title>
+    <link rel="stylesheet" href="../bootstrap.min.css">
+    <link rel="stylesheet" href="../main.css">
+  </head>
+  <body>
+    <h1>Floorplan Visualizer</h1>
+    <div id="text-container" class="txt-cnt">
+        Click and drag on the image below to pan around the model.
+    </div>
+    <div id="model-container" class="model-cnt">
+      
+    </div>
+    <div id="btn-container" class="btn-cnt">
+        <a href="download-model.html"><button id="model-dl" class="btn btn-info">Download Model</button></a>
+        <a href="index.html"><button id="restart-model" class="btn btn-danger">Start Again</button></a>
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <!--<script src="../libs/three.min.js"></script>
+    <script src="../libs/OrbitControls.js"></script>
+    <script src="../libs/STLLoader.js"></script> -->
+    <script src="./wow.js"></script>
+  </body>
+</html>
