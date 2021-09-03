@@ -57,6 +57,9 @@ function init() {
 
     scene.background = new THREE.Color( 0xfffff0 );
 
+    const gridTexture = new THREE.TextureLoader().load('../images/grid.jpeg');
+    scene.background = gridTexture;
+
     //const contourTexture = new THREE.TextureLoader().load('contours2.png');
     //scene.background = contourTexture;
 

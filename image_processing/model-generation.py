@@ -127,7 +127,7 @@ def generate_mesh(faces, vertices):
     return shape
 
 
-def main(image_dir, filename_wall, filename_door):
+def main(image_dir, filename_wall, filename_door, filename_window):
     #filename = 'image-asset_flooded.jpeg'
     #filename = 'floorplan-apartment_walls.jpg'
     #filename_door = 'floorplan-apartment_doors_bw.jpg'
@@ -136,18 +136,25 @@ def main(image_dir, filename_wall, filename_door):
     #filename_door = 'floorplan-apartment_walls_doors.jpg'
     filepath = os.path.join(image_dir,filename_wall)
     filepath_door = os.path.join(image_dir,filename_door)
+    filepath_window = os.path.join(image_dir,filename_window)
+    
     output = os.path.join(image_dir, "temp_mesh.stl")
     floor = False
     door = True
+    window = True
+
     image = open_file(filepath)
     image_door = open_file(filepath_door)
+    image_window = open_file(filepath_window)
     #image = cv2.imread(filepath)
     #image_door = cv2.imread(filepath_door)
     post_image = preprocess_image(image)
     post_image_door = preprocess_image(image_door)
+    post_image_window = preprocess_image(image_window)
 
     contours, hierarchy = cv2.findContours(post_image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours2, hierarchy2 = cv2.findContours(post_image_door.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours3, hierarchy2 = cv2.findContours(post_image_window.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     """
     # Draw all of the contours that we have detected in white, one at a time
     out = np.zeros_like(post_image)
@@ -165,7 +172,7 @@ def main(image_dir, filename_wall, filename_door):
 
     faces = []
     vert = []
-    h = 300
+    h = 200
 
     for contour in contours:
         faces, vert = calc_faces(contour, 0, h, faces, vert)
@@ -176,6 +183,11 @@ def main(image_dir, filename_wall, filename_door):
     if door:
         for contour in contours2:
             faces, vert = calc_faces(contour, (h*0.8), h, faces, vert)
+
+    if window:
+        for contour in contours3:
+            faces, vert = calc_faces(contour, (h*0.8), h, faces, vert)
+            faces, vert = calc_faces(contour, 0, (h*0.3), faces, vert)
 
     faces = np.array(faces)
     vertices = np.array(vert)
@@ -211,4 +223,5 @@ if __name__ == "__main__":
     image_dir = sys.argv[1]
     file_name_walls = sys.argv[2]
     file_name_doors = sys.argv[3]
-    main(image_dir, file_name_walls, file_name_doors)
+    file_name_windows = sys.argv[4]
+    main(image_dir, file_name_walls, file_name_doors, file_name_windows)

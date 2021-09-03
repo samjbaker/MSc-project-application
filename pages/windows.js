@@ -1,9 +1,9 @@
-let origImage, doorImage
+let featureImage, origImage
 
 window.onload = function() {
-    window.api.send("getImageWalls");
+    window.api.send("getImageDoors");
 
-    window.api.receive("returnImageWalls", (message) => {
+    window.api.receive("returnImageDoors", (message) => {
         var img_div = document.getElementById('image-container');
         var img = document.createElement("img");
         img.id = 'building-plan'
@@ -11,22 +11,20 @@ window.onload = function() {
         img_div.appendChild(img);
         return;
     });
-
     window.api.send("getImage");
 
     window.api.receive("returnImage", (message) => {
         origImage = message;
-        return;
     });
 }
 
-document.getElementById('detect-doors').onclick = function detectDoors() {
+document.getElementById('do-windows').onclick = function detectDoors() {
     var btn_div = document.getElementById('btn-container');
     btn_div.textContent = '';
-    window.api.send("detectDoors");
-    window.api.receive("detectedDoors", (message) => {
+    window.api.send("detectWindows");
+    window.api.receive("detectedWindows", (message) => {
         console.log(message);
-        doorImage = message;
+        featureImage = message;
         updateImage(message, 'building-plan');
         //window.location.href = "perspective.html";
         createButtons();
@@ -44,13 +42,14 @@ function updateImage(path, id)
 function createButtons()
 {
     var btn_div = document.getElementById('btn-container');
-    document.getElementById('text-container').textContent = "Have the doors and windows been correctly highlighted? Click on the image to switch between the detected walls and the original image.";
+    document.getElementById('text-container').textContent = "Have the doors and windows been labelled as the correct things? Windows are blue and doors are green. Click toggle to switch between the original plan to double check.";
     var aTagY = document.createElement('a');
     aTagY.setAttribute('href',"generate-model.html");
     var aTagN = document.createElement('a');
-    aTagN.setAttribute('href',"fix-doors.html");
+    aTagN.setAttribute('href',"fix-windows.html");
     var yesButton = document.createElement("yes-button");
     var noButton = document.createElement("no-button");
+    var toggleButton = document.createElement("toggle-button")
     yesButton.type = "button";
     yesButton.className = "btn btn-success";
     yesButton.value = "Yes";
@@ -59,19 +58,23 @@ function createButtons()
     noButton.className = "btn btn-danger";
     noButton.value = "No";
     noButton.innerHTML = "No";
+    toggleButton.type = "button";
+    toggleButton.className = "btn btn-info";
+    toggleButton.value = "Toggle";
+    toggleButton.innerHTML = "Toggle";
     aTagY.appendChild(yesButton);
     aTagN.appendChild(noButton);
     btn_div.appendChild(aTagY);
     btn_div.appendChild(aTagN);
-    var img_div = document.getElementById('image-container');
-    img_div.onclick = function toggleImage()
+    toggleButton.onclick = function toggleImage()
     {
         var pic = document.getElementById('building-plan');
         if (pic.src.substring(pic.src.length - 5) == "s.jpg"){
             pic.src = origImage;
         }
         else {
-            pic.src = doorImage;
+            pic.src = featureImage;
         }
     }
+    btn_div.appendChild(toggleButton);
 }

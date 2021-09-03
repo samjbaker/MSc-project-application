@@ -7,7 +7,8 @@ const fs = require('fs');
 const sharp = require('sharp');
 const sizeOf = require('image-size');
 
-let mainWindow, w, h, dest_image
+let mainWindow, w, h, dest_image, origImage
+let corners = []
 
 function createWindow () {
   // getting system width and height and making the display window full screen
@@ -354,6 +355,7 @@ ipcMain.on("makeModel", (event, args) => {
   temp_dir = path.join(app.getPath('temp'))
   file_name_walls = "temp_walls.jpg"
   file_name_doors = "temp_doors_bw.jpg"
+  file_name_windows = "temp_windows.jpg"
 
   let pypath = path.join(__dirname,'venv','bin','python3.7')
 
@@ -361,7 +363,7 @@ ipcMain.on("makeModel", (event, args) => {
     mode: 'text',
     pythonOptions: ['-u'],
     pythonPath: pypath,
-    args: [temp_dir, file_name_walls, file_name_doors]
+    args: [temp_dir, file_name_walls, file_name_doors, file_name_windows]
   };
   let ret_val;
   let pyshell = new PythonShell(path.join(__dirname,'image_processing','model-generation.py'), options)
@@ -413,6 +415,118 @@ ipcMain.on("clearImage", (event, args) => {
   let imgPath = path.join(app.getPath('temp'),'temp_walls.jpg')
   deleteFile(imgPath)
 });
+
+//Handles launching python files for perspective correction
+ipcMain.on("drawCorner", (event, args) => {
+  //console.log(`From renderer: `+ args[0] + " " + args[1])
+  temp_file = path.join(app.getPath('temp'),'temp.jpg')
+  if (corners.length == 0){
+    corner_file = path.join(app.getPath('temp'),'temp_corner.jpg')
+    copyFile(temp_file, corner_file)
+  }
+  x = args[0]
+  y = args[1]
+  corners.push(x)
+  corners.push(y)
+
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [x, y, corner_file]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','draw-circle.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+
+    console.log("Corr message: "+ ret_val);
+    //console.log('finished');
+    // Send result back to renderer process
+    mainWindow.webContents.send("drawnCorner", [ret_val, false]);
+    if (corners.length == 8){
+      correctPerspective();
+    }
+  });
+});
+
+//Function to trigger the correct perspective script
+function correctPerspective() {
+  console.log(corners)
+  temp_file = path.join(app.getPath('temp'),'temp.jpg')
+  corner_file = path.join(app.getPath('temp'),'temp_corner.jpg')
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [corners, temp_file]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','perspective.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+    console.log("Corr2 message: "+ ret_val);
+    //console.log('finished');
+    // Send result back to renderer process
+    mainWindow.webContents.send("drawnCorner", [ret_val, true]);
+  })
+}
+
+
+//Triggers python script to detect doors from detect-doors.html
+ipcMain.on("detectWindows", (event, args) => {
+  //console.log(`From renderer: `+ args[0] + " " + args[1])
+  temp_dir = path.join(app.getPath('temp'))
+
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [temp_dir]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','detect_windows.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+    console.log("Window message: "+ ret_val);
+    // Send result back to renderer process
+    mainWindow.webContents.send("detectedWindows", ret_val);
+  });
+});
+
+//Sending Mesh path back to view-model.js
+ipcMain.on("getImageCombo", (event, args) => {
+  let meshPath = path.join(app.getPath('temp'),'temp_combo_windows.jpg')
+  mainWindow.webContents.send("returnImageCombo", meshPath);
+});
+
 
 /*
 =======================================================================

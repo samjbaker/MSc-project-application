@@ -1,7 +1,7 @@
 window.onload = function() {
-    window.api.send("getImageDoors");
+    window.api.send("getImageCombo");
 
-    window.api.receive("returnImageDoors", (message) => {
+    window.api.receive("returnImageCombo", (message) => {
         var img_div = document.getElementById('image-container');
         var img = document.createElement("img");
         img.id = 'building-plan'
