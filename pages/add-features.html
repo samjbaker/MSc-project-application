@@ -4,25 +4,26 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Electron Test</title>
+    <title>Floorplan Visualizer</title>
     <link rel="stylesheet" href="../bootstrap.min.css">
     <link rel="stylesheet" href="../main.css">
+    <link rel="stylesheet" href="../jcrop.css">
   </head>
   <body>
-    <h1>Floorplan Visualizer</h1>
+    <h1>Let's get ready to render!!! :)</h1>
     <div id="text-container" class="txt-cnt">
-
+        Have any doors or windows been missed?
     </div>
     <div id="image-container" class="image-cnt">
-
+      
     </div>
     <div id="btn-container" class="btn-cnt">
-      <button id="choose-file" class="btn btn-primary">Select a file</button>
+      <button id="yes-add" class="btn btn-success">Yes</button>
+      <a href="windows.html"><button id="no-add" class="btn btn-danger">No</button></a>
     </div>
 
-
     <!-- You can also require other files to run in this process -->
-    <!-- <script src="../renderer.js"></script> -->
-    <script src="./loadfile.js"></script>
+    <script src="./jcrop.js"></script>
+    <script src="./add-features.js"></script>
   </body>
 </html>

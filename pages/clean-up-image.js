@@ -27,7 +27,7 @@ window.onload = function() {
 }
 
 //Toggles image between input and detected walls
-document.getElementById('image-container').onclick = function toggleImage()
+document.getElementById('toggle').onclick = function toggleImage()
     {
         var pic = document.getElementById('building-walls');
         if (pic.src.substring(pic.src.length - 5) == "2.jpg"){
@@ -42,7 +42,16 @@ document.getElementById('image-container').onclick = function toggleImage()
 document.getElementById('clean-yes').onclick = function removeWalls() {
     var btn_div = document.getElementById('btn-container');
     var img_div = document.getElementById('image-container');
-    btn_div.textContent = '';
+    //btn_div.textContent = '';
+    var yesVar = document.getElementById('clean-yes');
+    var noVar = document.getElementById('clean-no');
+    if (yesVar.parentNode) {
+        yesVar.parentNode.removeChild(yesVar);
+    }
+    if (noVar.parentNode) {
+        noVar.parentNode.removeChild(noVar);
+    }
+
     document.getElementById('text-container').textContent = "Select any erroneously selected walls with the tool and click 'remove' when ready. When all extra sections are removed click 'done";
     var aTag = document.createElement('a');
     aTag.setAttribute('href',"detect-doors.html");
@@ -70,12 +79,12 @@ document.getElementById('clean-yes').onclick = function removeWalls() {
         });
     }
     doneButton.type = "button";
-    doneButton.className = "btn btn-info";
+    doneButton.className = "btn btn-success";
     doneButton.value = "Done";
     doneButton.innerHTML = "Done";
     aTag.appendChild(doneButton);
-    btn_div.appendChild(aTag);
-    btn_div.appendChild(removeButton);
+    btn_div.prepend(removeButton);
+    btn_div.prepend(aTag);
 }
 
 //Updates an image with the specified

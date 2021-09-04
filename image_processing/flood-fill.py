@@ -33,7 +33,7 @@ def main():
     y = int(float(sys.argv[2]))
     temp_dir = sys.argv[3]
 
-    path_to_write = os.path.join(temp_dir, "temp.jpg")
+    path_to_write = os.path.join(temp_dir, "temp_backup.jpg")
     path_to_write2 = os.path.join(temp_dir, "temp_walls.jpg")
     path_to_write3 = os.path.join(temp_dir, "temp_walls2.jpg")
 

@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Electron Test</title>
+    <title>Floorplan Visualizer</title>
     <link rel="stylesheet" href="../bootstrap.min.css">
     <link rel="stylesheet" href="../main.css">
   </head>
   <body>
     <h1>Floorplan Visualizer</h1>
     <div id="text-container" class="txt-cnt">
-
+        Click on any windows (in blue) that have been incorrectly labelled as a door (in green). Click 'done' when finished.
     </div>
     <div id="image-container" class="image-cnt">
-
+      
     </div>
     <div id="btn-container" class="btn-cnt">
-      <button id="choose-file" class="btn btn-primary">Select a file</button>
+        <a href="generate-model.html"><button id="done-fix" class="btn btn-success">Done</button></a>
+        <button id="undo-fix" class="btn btn-danger">Undo</button>
+        <button id="toggle" class="btn btn-info">Toggle</button>
     </div>
 
-
     <!-- You can also require other files to run in this process -->
-    <!-- <script src="../renderer.js"></script> -->
-    <script src="./loadfile.js"></script>
+    <script src="./fix-windows.js"></script>
   </body>
 </html>

@@ -53,13 +53,14 @@ function updateImage(path, id)
 function createButtons()
 {
     var btn_div = document.getElementById('btn-container');
-    document.getElementById('text-container').textContent = "Have all the walls been highlighted correctly? Click on the image to switch between the detected walls and the original image.";
+    document.getElementById('text-container').textContent = "Have all the walls been highlighted correctly? Click 'toggle' to switch between the detected walls and the original image.";
     var aTagY = document.createElement('a');
     aTagY.setAttribute('href',"clean-up-image.html");
     var aTagN = document.createElement('a');
     aTagN.setAttribute('href',"flood-fill.html");
     var yesButton = document.createElement("yes-button");
     var noButton = document.createElement("no-button");
+    var toggleButton = document.createElement("toggle");
     yesButton.type = "button";
     yesButton.className = "btn btn-success";
     yesButton.value = "Yes";
@@ -68,12 +69,15 @@ function createButtons()
     noButton.className = "btn btn-danger";
     noButton.value = "No";
     noButton.innerHTML = "No";
+    toggleButton.type = "button";
+    toggleButton.className = "btn btn-info";
+    toggleButton.value = "Toggle";
+    toggleButton.innerHTML = "Toggle";
     aTagY.appendChild(yesButton);
     aTagN.appendChild(noButton);
     btn_div.appendChild(aTagY);
     btn_div.appendChild(aTagN);
-    var img_div = document.getElementById('image-container');
-    img_div.onclick = function toggleImage()
+    toggleButton.onclick = function toggleImage()
     {
         var pic = document.getElementById('building-plan');
         if (pic.src.substring(pic.src.length - 5) == "2.jpg"){
@@ -83,4 +87,5 @@ function createButtons()
             pic.src = wallImage2;
         }
     }
+    btn_div.appendChild(toggleButton);
 }

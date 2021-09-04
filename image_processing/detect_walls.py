@@ -52,7 +52,7 @@ def colour_walls(img):
     )
 
     # set those pixels to be another colour
-    img2[black_pixels] = [0, 200, 0]
+    img2[black_pixels] = [0, 255, 0]
     return img2
 
 

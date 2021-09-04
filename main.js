@@ -7,7 +7,7 @@ const fs = require('fs');
 const sharp = require('sharp');
 const sizeOf = require('image-size');
 
-let mainWindow, w, h, dest_image, origImage
+let mainWindow, w, h, dest_image, origImage, backUp
 let corners = []
 
 function createWindow () {
@@ -59,9 +59,9 @@ app.whenReady().then(() => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
   //if (process.platform !== 'darwin') 
-  let tempFile = path.join(app.getPath('temp'),'temp_walls.jpg')
-  deleteFile(tempFile)
-  console.log("delteted!")
+  //let tempFile = path.join(app.getPath('temp'),'temp_walls.jpg')
+  //deleteFile(tempFile)
+  //console.log("delteted!")
   app.quit()
 })
 
@@ -105,6 +105,7 @@ ipcMain.on("toMain", (event, args) => {
 ipcMain.on("chooseFile", (event, arg) => {
   //dest_image = path.join(__dirname, 'image_processing', 'temp_images', 'temp.jpg')
   dest_image = path.join(app.getPath('temp'),'temp.jpg')
+  backUp = path.join(app.getPath('temp'),'temp_backup.jpg')
   deleteFile(dest_image);
   const result = dialog.showOpenDialog({
     properties: ["openFile"],
@@ -124,10 +125,10 @@ ipcMain.on("chooseFile", (event, arg) => {
         fit: 'contain',
         background: { r: 255, g: 255, b: 255}
       })
-      //.toFile(path.join('image_processing', 'temp_images', 'temp.jpg'))
       .toFile(dest_image)
       .then(() => {
         mainWindow.webContents.send("chosenFile", dest_image)
+        copyFile(dest_image, backUp);
       });
       }
   }).catch(err => {
@@ -523,10 +524,108 @@ ipcMain.on("detectWindows", (event, args) => {
 
 //Sending Mesh path back to view-model.js
 ipcMain.on("getImageCombo", (event, args) => {
-  let meshPath = path.join(app.getPath('temp'),'temp_combo_windows.jpg')
-  mainWindow.webContents.send("returnImageCombo", meshPath);
+  let windowPath = path.join(app.getPath('temp'),'temp_combo_windows.jpg')
+  mainWindow.webContents.send("returnImageCombo", windowPath);
 });
 
+//Sending Mesh path back to view-model.js
+ipcMain.on("cleanUp", (event, args) => {
+  let cleanFile = path.join(app.getPath('temp'),'temp_walls.jpg')
+  deleteFile(cleanFile)
+  console.log("delteted!")
+  mainWindow.webContents.send("cleanedUp", cleanFile);
+});
+
+
+//Handles launching python files for fix-windows.html
+ipcMain.on("fillWindows", (event, args) => {
+  //console.log(`From renderer: `+ args[0] + " " + args[1])
+  x = args[0]
+  y = args[1]
+  temp_dir = path.join(app.getPath('temp'))
+  temp_file = path.join(app.getPath('temp'),'temp_windows.jpg')
+  back_up = path.join(app.getPath('temp'),'temp_windows_undo.jpg')
+  temp_file2 = path.join(app.getPath('temp'),'temp_combo_windows.jpg')
+  back_up2 = path.join(app.getPath('temp'),'temp_combo_windows_undo.jpg')
+  temp_file3 = path.join(app.getPath('temp'),'temp_doors_bw.jpg')
+  back_up3 = path.join(app.getPath('temp'),'temp_doors_bw_undo.jpg')
+  copyFile(temp_file, back_up)
+  copyFile(temp_file2, back_up2)
+  copyFile(temp_file3, back_up3)
+
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [x, y, temp_dir]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','flood-fill_windows.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+    console.log("Fixed window message: "+ ret_val);
+    //console.log('finished');
+    // Send result back to renderer process
+    mainWindow.webContents.send("filledWindows", ret_val);
+  });
+});
+
+
+ipcMain.on("undoWindow", (event, args) => {
+  let temp_file = path.join(app.getPath('temp'),'temp_windows.jpg')
+  let back_up = path.join(app.getPath('temp'),'temp_windows_undo.jpg')
+  let temp_file2 = path.join(app.getPath('temp'),'temp_combo_windows.jpg')
+  let back_up2 = path.join(app.getPath('temp'),'temp_combo_windows_undo.jpg')
+  let temp_file3 = path.join(app.getPath('temp'),'temp_doors_bw.jpg')
+  let back_up3 = path.join(app.getPath('temp'),'temp_doors_bw_undo.jpg')
+  copyFile(back_up, temp_file)
+  copyFile(back_up2, temp_file2)
+  copyFile(back_up3, temp_file3)
+  mainWindow.webContents.send("undoneWindow", temp_file2);
+});
+
+
+//Handles python script to add features from add-features.html
+ipcMain.on("addDoor", (event, args) => {
+  x = args[0];
+  y = args[1];
+  w1 = args[2];
+  h1 = args[3];
+  temp_dir = path.join(app.getPath('temp'))
+
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [temp_dir, x, y, w1, h1]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','draw_door.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+    console.log("Door draw msg: "+ ret_val);
+    // Send result back to renderer process
+    mainWindow.webContents.send("addedDoor", ret_val);
+  });
+});
 
 /*
 =======================================================================

@@ -1,14 +1,15 @@
-let origImage, doorImage
+let origImage, comboImage
 
 window.onload = function() {
-    window.api.send("getImageDoors");
+    window.api.send("getImageCombo");
 
-    window.api.receive("returnImageDoors", (message) => {
-        doorImage = message;
+    window.api.receive("returnImageCombo", (message) => {
+        comboImage = message
         var img_div = document.getElementById('image-container');
         var img = document.createElement("img");
         img.id = 'building-plan'
         img.src = message;
+        console.log(message);
         img_div.appendChild(img);
         return;
     });
@@ -30,20 +31,10 @@ document.getElementById('image-container').onclick = function clickEvent(e) {
     var y = e.clientY - rect.top;  //y position within the element.
     console.log("Left? : " + x + " ; Top? : " + y + ".");
     //Sending co-ords to main.js
-    window.api.send("fillDoors", [x.toString(), y.toString()])
-    window.api.receive("filledDoors", (data) => {
+    window.api.send("fillWindows", [x.toString(), y.toString()])
+    window.api.receive("filledWindows", (data) => {
         im_path = data
         updateImage(im_path, 'building-plan')
-    });
-}
-
-//Implementing undo function
-document.getElementById('undo-fix').onclick = function undoFill() {
-    window.api.send("undoDoor");
-    window.api.receive("undoneDoor", (message) => {
-        im_path = message
-        updateImage(im_path, 'building-plan')
-        return;
     });
 }
 
@@ -54,6 +45,16 @@ function updateImage(path, id)
     pic.src = path+"?"+new Date().valueOf();
 }
 
+//Implementing undo function
+document.getElementById('undo-fix').onclick = function undoFill() {
+    window.api.send("undoWindow");
+    window.api.receive("undoneWindow", (message) => {
+        im_path = message
+        updateImage(im_path, 'building-plan')
+        return;
+    });
+}
+
 document.getElementById('toggle').onclick = function toggleImage()
     {
         var pic = document.getElementById('building-plan');
@@ -61,6 +62,6 @@ document.getElementById('toggle').onclick = function toggleImage()
             pic.src = origImage;
         }
         else {
-            pic.src = doorImage;
+            pic.src = comboImage;
         }
     }
