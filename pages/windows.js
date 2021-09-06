@@ -69,11 +69,11 @@ function createButtons()
     toggleButton.onclick = function toggleImage()
     {
         var pic = document.getElementById('building-plan');
-        if (pic.src.substring(pic.src.length - 5) == "s.jpg"){
-            pic.src = origImage;
+        if (pic.src.includes("s.jpg")){
+            updateImage(origImage, 'building-plan');
         }
         else {
-            pic.src = featureImage;
+            updateImage(featureImage, 'building-plan');
         }
     }
     btn_div.appendChild(toggleButton);

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Floorplan 3D</title>
+    <link rel="stylesheet" href="../main.css">
+  </head>
+  <body>
+    <div id="title-div" class="title-div">
+      <img id="title-img" class="title-img" src="../images/floorplan-final.png" alt="floorplan-logo">
+    </div>
+    <div id="text-container" class="txt-cnt">
+        Click 'generate model' to begin the final step!
+    </div>
+    <div id="image-container" class="image-cnt">
+      
+    </div>
+    <div id="btn-container" class="btn-cnt">
+        <button id="model-gen" class="btn btn-info">Generate Model</button>
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./generate-model-nd.js"></script>
+  </body>
+</html>

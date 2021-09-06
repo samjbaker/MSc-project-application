@@ -30,11 +30,13 @@ window.onload = function() {
 document.getElementById('toggle').onclick = function toggleImage()
     {
         var pic = document.getElementById('building-walls');
-        if (pic.src.substring(pic.src.length - 5) == "2.jpg"){
-            pic.src = origImage;
+        if (pic.src.includes("2.jpg")){
+            //pic.src = origImage;
+            updateImage(origImage, 'building-walls');
         }
         else {
-            pic.src = wallImage2;
+            //pic.src = wallImage2;
+            updateImage(wallImage2, 'building-walls')
         }
     }
 
@@ -74,6 +76,7 @@ document.getElementById('clean-yes').onclick = function removeWalls() {
         //stage.destroy();
         window.api.receive("drawnSquare", (message) => {
             console.log("square ",message);
+            wallImage2 = message;
             updateImage(message, 'building-walls');
             return;
         });

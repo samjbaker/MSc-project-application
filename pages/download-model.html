@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Floorplan Visualizer</title>
-    <link rel="stylesheet" href="../bootstrap.min.css">
+    <title>Floorplan 3D</title>
     <link rel="stylesheet" href="../main.css">
   </head>
   <body>
-    <h1>Floorplan Visualizer</h1>
+    <div id="title-div" class="title-div">
+      <img id="title-img" class="title-img" src="../images/floorplan-final.png" alt="floorplan-logo">
+    </div>
     <div id="text-container" class="txt-cnt">
         Click 'download model' to download the model as a .STL file for use with external programs (e.g. blender)
     </div>
-    <div id="btn-container" class="btn-cnt">
+    <div id="image-container" class="image-cnt">
+        
+    </div>
+    <div id="btn-container" class="btn-cnt2">
         <button id="model-dl" class="btn btn-success">Download Model</button>
         <a href="view-model.html"><button id="model-view" class="btn btn-info">View Model</button></a>
         <a href="index.html"><button id="restart-model" class="btn btn-danger">Start Again</button></a>

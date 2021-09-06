@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Floorplan Visualizer</title>
-    <link rel="stylesheet" href="../bootstrap.min.css">
+    <title>Floorplan 3D</title>
     <link rel="stylesheet" href="../main.css">
   </head>
   <body>
-    <h1>Floorplan Visualizer</h1>
+    <div id="title-div" class="title-div">
+      <img id="title-img" class="title-img" src="../images/floorplan-final.png" alt="floorplan-logo">
+    </div>
     <div id="text-container" class="txt-cnt">
-        Click 'detect features' to begin the next stage of model generation. (This can take a few seconds)
+        Click 'detect features' to automatically detect the doors and windows (this can take a few seconds). Click 'skip' to proceed without detecting the doors and windows.
     </div>
     <div id="image-container" class="image-cnt">
       
     </div>
     <div id="btn-container" class="btn-cnt">
       <button id="detect-doors" class="btn btn-info">Detect Features</button>
+      <a href="generate-model-no-door.html"><button id="skip-doors" class="btn btn-danger">Skip</button></a>
     </div>
 
 

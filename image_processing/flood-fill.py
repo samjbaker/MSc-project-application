@@ -43,8 +43,8 @@ def main():
     #seed_point = (290, 290)  # Coordinates
     #new_val = (255, 255, 255)  # Assign new value
     new_val = (0, 255, 0)
-    lower_diff = (30, 30, 30)  # Lower grayscale difference
-    up_diff = (30, 30, 30)  # Upper grayscale difference
+    lower_diff = (40, 40, 40)  # Lower grayscale difference
+    up_diff = (40, 40, 40)  # Upper grayscale difference
     # mask picture
     h, w = image.shape[:2]
     # img_mask = open_file(path_to_write2)

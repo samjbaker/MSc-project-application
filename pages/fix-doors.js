@@ -32,6 +32,7 @@ document.getElementById('image-container').onclick = function clickEvent(e) {
     //Sending co-ords to main.js
     window.api.send("fillDoors", [x.toString(), y.toString()])
     window.api.receive("filledDoors", (data) => {
+        doorImage = data;
         im_path = data
         updateImage(im_path, 'building-plan')
     });
@@ -57,10 +58,10 @@ function updateImage(path, id)
 document.getElementById('toggle').onclick = function toggleImage()
     {
         var pic = document.getElementById('building-plan');
-        if (pic.src.substring(pic.src.length - 5) == "s.jpg"){
-            pic.src = origImage;
+        if (pic.src.includes("s.jpg")){
+            updateImage(origImage, 'building-plan');
         }
         else {
-            pic.src = doorImage;
+            updateImage(doorImage, 'building-plan');
         }
     }

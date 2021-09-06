@@ -33,6 +33,7 @@ document.getElementById('image-container').onclick = function clickEvent(e) {
     //Sending co-ords to main.js
     window.api.send("fillWindows", [x.toString(), y.toString()])
     window.api.receive("filledWindows", (data) => {
+        comboImage = data;
         im_path = data
         updateImage(im_path, 'building-plan')
     });
@@ -58,10 +59,10 @@ document.getElementById('undo-fix').onclick = function undoFill() {
 document.getElementById('toggle').onclick = function toggleImage()
     {
         var pic = document.getElementById('building-plan');
-        if (pic.src.substring(pic.src.length - 5) == "s.jpg"){
-            pic.src = origImage;
+        if (pic.src.includes("s.jpg")){
+            updateImage(origImage, 'building-plan');
         }
         else {
-            pic.src = comboImage;
+            updateImage(comboImage, 'building-plan');
         }
     }

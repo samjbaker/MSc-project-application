@@ -53,7 +53,7 @@ function updateImage(path, id)
 function createButtons()
 {
     var btn_div = document.getElementById('btn-container');
-    document.getElementById('text-container').textContent = "Have all the walls been highlighted correctly? Click 'toggle' to switch between the detected walls and the original image.";
+    document.getElementById('text-container').textContent = "Have all the walls been highlighted? Click 'toggle' to switch between the detected walls and the original image.";
     var aTagY = document.createElement('a');
     aTagY.setAttribute('href',"clean-up-image.html");
     var aTagN = document.createElement('a');

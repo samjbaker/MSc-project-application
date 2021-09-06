@@ -1,7 +1,7 @@
 {
-  "name": "pythy-pythy",
+  "name": "floorplan3d",
   "version": "1.0.0",
-  "description": "Trial electron app",
+  "description": "Floor Plan 3D Model Generator",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -41,7 +41,7 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {"icon": "./images/icons/icon"},
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",

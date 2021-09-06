@@ -90,7 +90,6 @@ def join_doorways(img, corners_threshold, room_max_length):
                 cv2.line(img, (x, y1[0]), (x, y2[0]), color, 1)
                 cv2.line(img2, (x, y1[0]), (x, y2[0]), [0, 0, 0], 1)
 
-    #cv2.imshow("linez",img2)
     return img
 
 

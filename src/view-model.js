@@ -55,10 +55,10 @@ function init() {
 
     loader = new STLLoader();
 
-    scene.background = new THREE.Color( 0xfffff0 );
+    scene.background = new THREE.Color( 0xE5E5E5 );
 
-    const gridTexture = new THREE.TextureLoader().load('../images/grid.jpeg');
-    scene.background = gridTexture;
+    //const gridTexture = new THREE.TextureLoader().load('../images/grid.jpeg');
+    //scene.background = gridTexture;
 
     //const contourTexture = new THREE.TextureLoader().load('contours2.png');
     //scene.background = contourTexture;
@@ -68,12 +68,12 @@ function init() {
 
     raycaster = new THREE.Raycaster();
 
-    const axesHelper = new THREE.AxesHelper( 500 );
-    scene.add( axesHelper );
+    //const axesHelper = new THREE.AxesHelper( 500 );
+    //scene.add( axesHelper );
 
     //Adding floor
     const geometry = new THREE.PlaneGeometry( 70, 50 );
-    const material = new THREE.MeshBasicMaterial( {color: 0xfff000, side: THREE.DoubleSide} );
+    const material = new THREE.MeshBasicMaterial( {color: 0xFCA311, side: THREE.DoubleSide} );
     const plane = new THREE.Mesh( geometry, material );
     plane.position.set(0, 10, 0)
     scene.add( plane );
@@ -120,7 +120,7 @@ function animate() {
 
 function loadSTL(meshPath) {
     loader.load( meshPath, function ( geometry ) {
-		const material = new THREE.MeshPhongMaterial( { color: 0x993d00, specular: 0x999999, shininess: 5, side: THREE.DoubleSide } );
+		const material = new THREE.MeshPhongMaterial( { color: 0x14213D, specular: 0x999999, shininess: 5, side: THREE.DoubleSide } );
 		const mesh = new THREE.Mesh( geometry, material );
 		mesh.position.set(20, 20,0);
 		mesh.rotation.set( 0, 0, Math.PI);

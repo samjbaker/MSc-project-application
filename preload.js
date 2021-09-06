@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld(
           "undoFill", "drawSquare", "detectDoors", "getImageDoors",
           "fillDoors", "undoDoor", "makeModel", "getMesh", "saveFile", "clearImage",
           "drawCorner", "correctPersp", "detectWindows", "getImageCombo", "cleanUp",
-          "fillWindows", "undoWindow", "addDoor"];
+          "fillWindows", "undoWindow", "addDoor", "makeModelND"];
           if (validChannels.includes(channel)) {
               ipcRenderer.send(channel, data);
           }
@@ -29,7 +29,7 @@ contextBridge.exposeInMainWorld(
           "returnImageDoors", "filledDoors", "undoneDoor", "madeModel", "returnMesh",
           "savedFile", "drawnCorner", "correctedPersp", "detectedWindows",
           "returnImageCombo", "cleanedUp", "filledWindows", "undoneWindow", 
-          "addedDoor"];
+          "addedDoor", "madeModelND"];
           if (validChannels.includes(channel)) {
               // Deliberately strip event as it includes `sender` 
               ipcRenderer.on(channel, (event, ...args) => func(...args));

@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Floorplan Visualizer</title>
-    <link rel="stylesheet" href="../bootstrap.min.css">
+    <title>Floorplan 3D</title>
     <link rel="stylesheet" href="../main.css">
   </head>
   <body>
-    <h1>Floorplan Visualizer</h1>
+    <div id="title-div" class="title-div">
+      <img id="title-img" class="title-img" src="../images/floorplan-final.png" alt="floorplan-logo">
+    </div>
     <div id="text-container" class="txt-cnt">
-        Click and drag on the image below to pan around the model.
+        Click and drag on the image below to pan around the model. Use the mouse scroll to zoom.
     </div>
     <div id="model-container" class="model-cnt">
       
@@ -25,6 +26,6 @@
     <!--<script src="../libs/three.min.js"></script>
     <script src="../libs/OrbitControls.js"></script>
     <script src="../libs/STLLoader.js"></script> -->
-    <script src="./wow.js"></script>
+    <script src="./view-model.js"></script>
   </body>
 </html>

@@ -1,4 +1,3 @@
-#from floor_mesh import calc_faces, get_floor_vertices
 from stl import mesh
 import cv2
 import numpy as np
@@ -8,11 +7,8 @@ import os
 import sys
 
 """
-Made some improvements to the mesh generating algorithm: now takes 
-each contour individually so that there aren't any glitches where
-contours are joined together. 
-Also can optionally generate a mesh above detected doorways
-@TODO Add door / window handling
+Generates a mesh based on an image of detected walls.
+Can optionally generate a mesh above detected doorways and windows.
 """
 
 
@@ -26,7 +22,6 @@ def open_file(path_to_file):
     __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
     im = cv2.imread(os.path.join(__location__, path_to_file))
-    # ---need to improve error handling: ---
     if (im is None):
         print("Image does not exist")
         sys.exit(1)
@@ -128,12 +123,6 @@ def generate_mesh(faces, vertices):
 
 
 def main(image_dir, filename_wall, filename_door, filename_window):
-    #filename = 'image-asset_flooded.jpeg'
-    #filename = 'floorplan-apartment_walls.jpg'
-    #filename_door = 'floorplan-apartment_doors_bw.jpg'
-    #filename = 'floorplan-apartment_walls.jpg'
-    #filename = os.path.join(image_dir, filename_w)
-    #filename_door = 'floorplan-apartment_walls_doors.jpg'
     filepath = os.path.join(image_dir,filename_wall)
     filepath_door = os.path.join(image_dir,filename_door)
     filepath_window = os.path.join(image_dir,filename_window)
@@ -155,24 +144,15 @@ def main(image_dir, filename_wall, filename_door, filename_window):
     contours, hierarchy = cv2.findContours(post_image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours2, hierarchy2 = cv2.findContours(post_image_door.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours3, hierarchy2 = cv2.findContours(post_image_window.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    """
-    # Draw all of the contours that we have detected in white, one at a time
-    out = np.zeros_like(post_image)
-    for i in range(len(contours)):
-        cv2.drawContours(out, contours, i, 255, 1)
-        # print(contours[i])
-        cv2.imshow('Contours', out)
-        cv2.waitKey(0)
-    
-    #showing image
-    cv2.imshow('Contours', out)
-    cv2.waitKey(0)
-    cv2.destroyWindow('Contours')
-    """
 
     faces = []
     vert = []
-    h = 200
+    # height for walls
+    h = 150
+    # height for top of windows
+    h_w = h*0.8
+    # height for bottom of windows
+    h_b = h*0.3
 
     for contour in contours:
         faces, vert = calc_faces(contour, 0, h, faces, vert)
@@ -182,12 +162,12 @@ def main(image_dir, filename_wall, filename_door, filename_window):
 
     if door:
         for contour in contours2:
-            faces, vert = calc_faces(contour, (h*0.8), h, faces, vert)
+            faces, vert = calc_faces(contour, h_w, h, faces, vert)
 
     if window:
         for contour in contours3:
-            faces, vert = calc_faces(contour, (h*0.8), h, faces, vert)
-            faces, vert = calc_faces(contour, 0, (h*0.3), faces, vert)
+            faces, vert = calc_faces(contour, h_w, h, faces, vert)
+            faces, vert = calc_faces(contour, 0, h_b, faces, vert)
 
     faces = np.array(faces)
     vertices = np.array(vert)

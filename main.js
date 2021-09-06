@@ -38,7 +38,7 @@ function createWindow () {
   mainWindow.loadFile('./pages/index.html')
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -72,8 +72,16 @@ ipcMain.on("toMain", (event, args) => {
     y = args[1]
     temp_dir = path.join(app.getPath('temp'))
     temp_file = path.join(app.getPath('temp'),'temp.jpg')
-    back_up = path.join(app.getPath('temp'),'temp_undo.jpg')
-    copyFile(temp_file, back_up)
+    let temp_file2 = path.join(app.getPath('temp'),'temp_walls.jpg')
+    let temp_file3 = path.join(app.getPath('temp'),'temp_walls2.jpg')
+    let back_up = path.join(app.getPath('temp'),'temp_backup.jpg')
+    let undoFile = path.join(app.getPath('temp'),'temp_undo.jpg')
+    let undoFile2 = path.join(app.getPath('temp'),'temp_walls_undo.jpg')
+    let undoFile3 = path.join(app.getPath('temp'),'temp_walls2_undo.jpg')
+    copyFile(temp_file, undoFile);
+    copyFile(back_up, undoFile);
+    copyFile(temp_file2, undoFile2);
+    copyFile(temp_file3, undoFile3);
 
     let pypath = path.join(__dirname,'venv','bin','python3.7')
 
@@ -109,7 +117,7 @@ ipcMain.on("chooseFile", (event, arg) => {
   deleteFile(dest_image);
   const result = dialog.showOpenDialog({
     properties: ["openFile"],
-    filters: [{ name: "Images", extensions: ["png","jpg","jpeg","gif","png"] }]
+    filters: [{ name: "Images", extensions: ["png","jpg","jpeg","gif","webp"] }]
   });
   result.then(({canceled, filePaths, bookmarks}) => {
     if(!canceled){
@@ -120,7 +128,7 @@ ipcMain.on("chooseFile", (event, arg) => {
         return;
       }
       sharp(src_image)
-        .resize(800, 600, {
+        .resize(760, 570, {
         kernel: sharp.kernel.nearest,
         fit: 'contain',
         background: { r: 255, g: 255, b: 255}
@@ -147,6 +155,7 @@ ipcMain.on("cropImage", (event, args) => {
   origImage = path.join(app.getPath('temp'),'temp.jpg')
   croppedImage = path.join(app.getPath('temp'),'temp1.jpg')
   outImage = path.join(app.getPath('temp'),'temp2.jpg')
+  let temp_backup = path.join(app.getPath('temp'),'temp_backup.jpg')
   x = args[0];
   y = args[1];
   w1 = args[2];
@@ -156,13 +165,14 @@ ipcMain.on("cropImage", (event, args) => {
     .then(function(new_file_info) {
         console.log("Image cropped and saved");
         //mainWindow.webContents.send("croppedImage", croppedImage);
-        sharp(croppedImage).resize(800, 600, {
+        sharp(croppedImage).resize(760, 570, {
           kernel: sharp.kernel.nearest,
           fit: 'contain',
           background: { r: 255, g: 255, b: 255}
         }).toFile(origImage)
         .then(() => {
           mainWindow.webContents.send("croppedImage", origImage);
+          copyFile(origImage, temp_backup);
         })
         .catch(function(err) {
           console.log("An error occured",err);
@@ -210,6 +220,14 @@ ipcMain.on("detectWalls", (event, args) => {
 //Sending image of processed walls back to renderer
 ipcMain.on("getImageWalls", (event, args) => {
   let wallImage = path.join(app.getPath('temp'),'temp_walls.jpg')
+  let wallImageFlood = path.join(app.getPath('temp'),'temp_walls_flood.jpg')
+  try {
+    if(!fs.existsSync(wallImage)){
+      copyFile(wallImageFlood, wallImage);
+    }
+  } catch(err) {
+    console.log(err)
+  }
   mainWindow.webContents.send("returnImageWalls", wallImage);
 });
 
@@ -221,9 +239,24 @@ ipcMain.on("getImageWalls2", (event, args) => {
 
 //Implementing undo function for flood-fill
 ipcMain.on("undoFill", (event, args) => {
-  let temp_file = path.join(app.getPath('temp'),'temp.jpg')
+
+  let temp_file = path.join(app.getPath('temp'),'temp_backup.jpg')
+  try {
+    if(!fs.existsSync(path.join(app.getPath('temp'),'temp_undo.jpg'))){
+      mainWindow.webContents.send("undoneFill", temp_file);
+      return;
+    }
+  } catch(err) {
+    console.log(err)
+  }
   let back_up = path.join(app.getPath('temp'),'temp_undo.jpg')
+  let temp_file2 = path.join(app.getPath('temp'),'temp_walls.jpg')
+  let temp_file3 = path.join(app.getPath('temp'),'temp_walls2.jpg')
+  let undoFile2 = path.join(app.getPath('temp'),'temp_walls_undo.jpg')
+  let undoFile3 = path.join(app.getPath('temp'),'temp_walls2_undo.jpg')
   copyFile(back_up, temp_file)
+  copyFile(undoFile2, temp_file2)
+  copyFile(undoFile3, temp_file3)
   mainWindow.webContents.send("undoneFill", temp_file);
 });
 
@@ -307,9 +340,9 @@ ipcMain.on("fillDoors", (event, args) => {
   y = args[1]
   temp_dir = path.join(app.getPath('temp'))
   temp_file = path.join(app.getPath('temp'),'temp_doors.jpg')
-  back_up = path.join(app.getPath('temp'),'temp_undo.jpg')
+  back_up = path.join(app.getPath('temp'),'temp_undo_door.jpg')
   temp_file2 = path.join(app.getPath('temp'),'temp_doors_bw.jpg')
-  back_up2 = path.join(app.getPath('temp'),'temp_undo2.jpg')
+  back_up2 = path.join(app.getPath('temp'),'temp_undo2_door.jpg')
   copyFile(temp_file, back_up)
   copyFile(temp_file2, back_up2)
 
@@ -342,9 +375,9 @@ ipcMain.on("fillDoors", (event, args) => {
 //Implementing undo function for fix-door.html
 ipcMain.on("undoDoor", (event, args) => {
   let temp_file = path.join(app.getPath('temp'),'temp_doors.jpg')
-  let back_up = path.join(app.getPath('temp'),'temp_undo.jpg')
+  let back_up = path.join(app.getPath('temp'),'temp_undo_door.jpg')
   let temp_file2 = path.join(app.getPath('temp'),'temp_doors_bw.jpg')
-  let back_up2 = path.join(app.getPath('temp'),'temp_undo2.jpg')
+  let back_up2 = path.join(app.getPath('temp'),'temp_undo2_door.jpg')
   copyFile(back_up, temp_file)
   copyFile(back_up2, temp_file2)
   mainWindow.webContents.send("undoneDoor", temp_file);
@@ -398,13 +431,13 @@ ipcMain.on("saveFile", (event, arg) => {
     filters: [{ name: "Mesh", extensions: ["stl"] }],
     message: "Choose where to save your model"
   }).then(result => {
-    if(!result.cancelled){
+    if(!result.canceled){
       console.log(result.filePath);
       copyFile(srcFile, result.filePath)
       mainWindow.webContents.send("savedFile", destPath)
     }
     else {
-      console.log(result.cancelled);
+      console.log(result.canceled);
     }
   }).catch(err => {
     console.log(err)
@@ -414,6 +447,8 @@ ipcMain.on("saveFile", (event, arg) => {
 //Deletes temp files ready for flood-fill.js
 ipcMain.on("clearImage", (event, args) => {
   let imgPath = path.join(app.getPath('temp'),'temp_walls.jpg')
+  let imgPath2 = path.join(app.getPath('temp'),'temp_walls_flood.jpg')
+  copyFile(imgPath, imgPath2)
   deleteFile(imgPath)
 });
 
@@ -465,6 +500,7 @@ function correctPerspective() {
   console.log(corners)
   temp_file = path.join(app.getPath('temp'),'temp.jpg')
   corner_file = path.join(app.getPath('temp'),'temp_corner.jpg')
+  let back_up = path.join(app.getPath('temp'),'temp_backup.jpg')
   let pypath = path.join(__dirname,'venv','bin','python3.7')
 
   let options = {
@@ -485,6 +521,7 @@ function correctPerspective() {
       throw err;
     };
     console.log("Corr2 message: "+ ret_val);
+    copyFile(temp_file, back_up)
     //console.log('finished');
     // Send result back to renderer process
     mainWindow.webContents.send("drawnCorner", [ret_val, true]);
@@ -528,10 +565,31 @@ ipcMain.on("getImageCombo", (event, args) => {
   mainWindow.webContents.send("returnImageCombo", windowPath);
 });
 
-//Sending Mesh path back to view-model.js
+//Deleting files that could cause bugs in index.js
 ipcMain.on("cleanUp", (event, args) => {
   let cleanFile = path.join(app.getPath('temp'),'temp_walls.jpg')
+  let cleanFile2 = path.join(app.getPath('temp'),'temp_backup.jpg')
+  let cleanFile3 = path.join(app.getPath('temp'),'temp_windows_undo.jpg')
+  let cleanFile4 = path.join(app.getPath('temp'),'temp_undo.jpg')
+  let cleanFile5 = path.join(app.getPath('temp'),'temp_walls_undo.jpg')
+  let cleanFile6 = path.join(app.getPath('temp'),'temp_walls2_undo.jpg')
+  let cleanFile7 = path.join(app.getPath('temp'),'temp_undo_door.jpg')
+  let cleanFile8 = path.join(app.getPath('temp'),'temp_undo2_door.jpg')
+  let cleanFile9 = path.join(app.getPath('temp'),'temp_windows_undo.jpg')
+  let cleanFile10 = path.join(app.getPath('temp'),'temp_combo_windows_undo.jpg')
+  let cleanFile11 = path.join(app.getPath('temp'),'temp_doors_bw_undo.jpg')
+
   deleteFile(cleanFile)
+  deleteFile(cleanFile2)
+  deleteFile(cleanFile3)
+  deleteFile(cleanFile4)
+  deleteFile(cleanFile5)
+  deleteFile(cleanFile6)
+  deleteFile(cleanFile7)
+  deleteFile(cleanFile8) 
+  deleteFile(cleanFile9)
+  deleteFile(cleanFile10)
+  deleteFile(cleanFile11) 
   console.log("delteted!")
   mainWindow.webContents.send("cleanedUp", cleanFile);
 });
@@ -624,6 +682,39 @@ ipcMain.on("addDoor", (event, args) => {
     console.log("Door draw msg: "+ ret_val);
     // Send result back to renderer process
     mainWindow.webContents.send("addedDoor", ret_val);
+  });
+});
+
+
+//Generates a model without need for doors and windows
+ipcMain.on("makeModelND", (event, args) => {
+  //console.log(`From renderer: `+ args[0] + " " + args[1])
+  temp_dir = path.join(app.getPath('temp'))
+  file_name_walls = "temp_walls.jpg"
+
+  let pypath = path.join(__dirname,'venv','bin','python3.7')
+
+  let options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    pythonPath: pypath,
+    args: [temp_dir, file_name_walls]
+  };
+  let ret_val;
+  let pyshell = new PythonShell(path.join(__dirname,'image_processing','model-generation-no-door.py'), options)
+  
+  pyshell.on('message', function(message) {
+    ret_val = message
+  })
+  
+  pyshell.end(function (err) {
+    if (err){
+      throw err;
+    };
+    console.log("Model msg: "+ ret_val);
+    console.log('finished');
+    // Send result back to renderer process
+    mainWindow.webContents.send("madeModelND", ret_val);
   });
 });
 

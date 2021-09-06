@@ -44,11 +44,11 @@ function updateImage(path, id)
 function createButtons()
 {
     var btn_div = document.getElementById('btn-container');
-    document.getElementById('text-container').textContent = "Have the doors and windows been correctly highlighted? Click on 'toggle' to switch between the detected walls and the original image.";
+    document.getElementById('text-container').textContent = "Are any areas highlighted as doors or windows that shouldn't be? Click on 'toggle' to switch between the detected walls and the original image.";
     var aTagY = document.createElement('a');
-    aTagY.setAttribute('href',"generate-model.html");
+    aTagY.setAttribute('href',"fix-doors.html");
     var aTagN = document.createElement('a');
-    aTagN.setAttribute('href',"fix-doors.html");
+    aTagN.setAttribute('href',"windows.html");
     var yesButton = document.createElement("yes-button");
     var noButton = document.createElement("no-button");
     var toggleButton = document.createElement("toggle");

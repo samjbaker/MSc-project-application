@@ -52,7 +52,7 @@ def main():
                      flags=4 | (255 << 8) | cv2.FLOODFILL_FIXED_RANGE)  # Mode 4 connectivity + 255 white + area calculation
     #print(write_file(os.path.join(temp_dir,"temp.jpg"), img_copy))
 
-    img_door[np.where(img_mask2 > 30)] = (0, 0, 0)
+    img_door[np.where(img_mask2[:h, :w] > 30)] = (0, 0, 0)
 
     cv2.imwrite(combo_path, combo_copy)
     cv2.imwrite(window_path_bw, window_copy)
