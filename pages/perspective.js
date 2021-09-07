@@ -5,7 +5,7 @@ window.onload = function() {
         var img_div = document.getElementById('image-container');
         var img = document.createElement("img");
         img.id = 'building-plan'
-        img.src = message;
+        img.src = message+"?"+new Date().valueOf();;
         img_div.appendChild(img);
         return;
     });

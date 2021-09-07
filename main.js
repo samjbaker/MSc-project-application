@@ -112,6 +112,7 @@ ipcMain.on("toMain", (event, args) => {
 //Handles choosing file from user's filesystem
 ipcMain.on("chooseFile", (event, arg) => {
   //dest_image = path.join(__dirname, 'image_processing', 'temp_images', 'temp.jpg')
+  corners = []
   dest_image = path.join(app.getPath('temp'),'temp.jpg')
   backUp = path.join(app.getPath('temp'),'temp_backup.jpg')
   deleteFile(dest_image);
@@ -152,9 +153,12 @@ ipcMain.on("getImage", (event, args) => {
 
 //Crops image to specified dimensions for crop.html
 ipcMain.on("cropImage", (event, args) => {
-  origImage = path.join(app.getPath('temp'),'temp.jpg')
-  croppedImage = path.join(app.getPath('temp'),'temp1.jpg')
-  outImage = path.join(app.getPath('temp'),'temp2.jpg')
+  sharp.cache(false);
+  let origImage = path.join(app.getPath('temp'),'temp.jpg')
+  let uti=Date.now()
+  let croppedImage = path.join(app.getPath('temp'),'temp1'+uti+'.jpg')
+  //deleteFile(croppedImage);
+  let outImage = path.join(app.getPath('temp'),'temp2.jpg')
   let temp_backup = path.join(app.getPath('temp'),'temp_backup.jpg')
   x = args[0];
   y = args[1];
@@ -169,10 +173,12 @@ ipcMain.on("cropImage", (event, args) => {
           kernel: sharp.kernel.nearest,
           fit: 'contain',
           background: { r: 255, g: 255, b: 255}
-        }).toFile(origImage)
+        }).toFile(outImage)
         .then(() => {
+          copyFile(outImage, origImage);
+          copyFile(origImage, temp_backup)
+          deleteFile(croppedImage);
           mainWindow.webContents.send("croppedImage", origImage);
-          copyFile(origImage, temp_backup);
         })
         .catch(function(err) {
           console.log("An error occured",err);
@@ -578,6 +584,8 @@ ipcMain.on("cleanUp", (event, args) => {
   let cleanFile9 = path.join(app.getPath('temp'),'temp_windows_undo.jpg')
   let cleanFile10 = path.join(app.getPath('temp'),'temp_combo_windows_undo.jpg')
   let cleanFile11 = path.join(app.getPath('temp'),'temp_doors_bw_undo.jpg')
+  let cleanFile12 = path.join(app.getPath('temp'),'temp1.jpg')
+  let cleanFile13 = path.join(app.getPath('temp'),'temp_corner.jpg')
 
   deleteFile(cleanFile)
   deleteFile(cleanFile2)
@@ -589,7 +597,9 @@ ipcMain.on("cleanUp", (event, args) => {
   deleteFile(cleanFile8) 
   deleteFile(cleanFile9)
   deleteFile(cleanFile10)
-  deleteFile(cleanFile11) 
+  deleteFile(cleanFile11)
+  deleteFile(cleanFile12)
+  deleteFile(cleanFile13) 
   console.log("delteted!")
   mainWindow.webContents.send("cleanedUp", cleanFile);
 });
