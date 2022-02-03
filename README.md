@@ -1,6 +1,6 @@
 ![Floorplan3D Logo](images/logo_white.png)
 
-# Floorplan 3D - A final project submitted for MSc Computer Science (Conversion)
+# Floorplan 3D - An MSc Computer Science (Conversion) final project
 
 **A Desktop Application to turn architectural floorplans into 3D models**
 
