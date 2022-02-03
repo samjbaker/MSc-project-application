@@ -17,4 +17,4 @@ The application includes:
 + Several mechanisms for user intervention to correct any inaccuracies of the detection algorithms.
 + A graphical user interface.
 
-
+** Note: It is currently only distributed for Mac OS 10.12 or later.
