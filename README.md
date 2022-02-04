@@ -1,4 +1,4 @@
-![Floorplan3D Logo](images/logo_white.png)
+<img src="images/logo_white.png" alt="Floorplan3D Logo" width="1000"/>
 
 # Floorplan 3D - An MSc Computer Science (Conversion) final project
 
@@ -18,3 +18,7 @@ The application includes:
 + A graphical user interface.
 
 **Note: It is currently only distributed for Mac OS 10.12 or later.**
+
+<img src="images/screen-recording-floorplan3d-gif.gif" alt="Screen Recording of the output 3D model" width="1000"/>
+
+A screen recording of Floorplan 3D's built in model viewer
