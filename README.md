@@ -1,6 +1,6 @@
 <img src="images/logo_white.png" alt="Floorplan3D Logo" width="1000"/>
 
-# Floorplan 3D - An MSc Computer Science (Conversion) final project
+# Floorplan 3D - My MSc final project
 
 **A Desktop Application to turn architectural floorplans into 3D models**
 
